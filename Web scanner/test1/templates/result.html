@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Scan Results</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <h1>Scan Results</h1>
+    <h2>Scan Summary</h2>
+    <p>The scan was performed on {{ SCAN_URL }}.</p>
+    <h2>Vulnerabilities Found</h2>
+    <table>
+        <tr>
+            <th>Vulnerability</th>
+            <th>Description</th>
+        </tr>
+        {% for vulnerability in vulnerabilities %}
+            <tr>
+                <td>{{ vulnerability }}</td>
+                <td>
+                    {% if "Server software" in vulnerability %}
+                        The server software is {{ vulnerability.split(": ")[1] }}.
+                    {% elif "Directory listing" in vulnerability %}
+                        Directory listing is enabled, which can expose sensitive information.
+                    {% elif "Insecure client access policy" in vulnerability %}
+                        The client access policy is not secure, which can allow unauthorized access.
+                    {% elif "Missing security headers" in vulnerability %}
+                        The following security headers are missing: {{ vulnerability.split(": ")[1] }}.
+                    {% elif "Unsafe HTTP header Content Security Policy" in vulnerability %}
+                        The Content Security Policy header is not set or is set to an unsafe value.
+                    {% elif "Secure flag of cookie" in vulnerability %}
+                        The secure flag is not set for one or more cookies.
+                    {% elif "HttpOnly flag of cookie" in vulnerability %}
+                        The HttpOnly flag is not set for one or more cookies.
+                    {% elif "Security.txt" in vulnerability %}
+                        The security.txt file contains the following information: {{ vulnerability.split(": ")[1] }}.
+                    {% elif "XSS vulnerability" in vulnerability %}
+                        A cross-site scripting (XSS) vulnerability was found.
+                    {% elif "SQL injection vulnerability" in vulnerability %}
+                        A SQL injection vulnerability was found.
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
